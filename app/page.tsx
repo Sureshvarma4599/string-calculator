@@ -6,9 +6,9 @@ import {Table} from '@/components/table';
 export default function Home() {
     const [answer, setAnswer] = useState(0);
     const [string, setString] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string|null>("");
 
-    const [history, setHistory] = useState([]);  // Store history of calculations
+    const [history, setHistory] = useState<any[]>([]);  // Store history of calculations
 
     const clear = () => {
         setAnswer(0);
