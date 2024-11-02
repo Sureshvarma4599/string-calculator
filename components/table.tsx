@@ -18,7 +18,7 @@ export const Table = ({ data }:any) => {
             </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-            {data && data?.length> 0 ?data.slice(0, 10).map((entry, index) => (
+            {data && data?.length> 0 ?data.slice(0, 10).map((entry:any, index:number) => (
                 <tr key={index}>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-0">
                         {index + 1}
