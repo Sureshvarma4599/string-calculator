@@ -1,12 +1,13 @@
 "use client";
 import {useRef, useState} from "react";
+import Alert from '@/components/alert';
 
 export default function Home() {
     const [answer, setAnswer] = useState(0);
     const [string, setString] = useState("");
     const [error, setError] = useState("");
 
-    const historyRef = useRef([]);  // Store history of calculations
+    const [history, setHistory] = useState([]);  // Store history of calculations
 
     const clear = () => {
         setAnswer(0);
@@ -39,8 +40,9 @@ export default function Home() {
 
         // Check for negatives
         const negatives: number[] = numberArray.filter(n => n < 0);
+
         if (negatives.length > 0) {
-            throw new Error(`negatives not allowed: ${negatives.join(', ')}`);
+            throw new Error(`negative numbers not allowed: ${negatives.join(', ')}`);
         }
 
         // Filter numbers <= 1000 and sum
@@ -53,7 +55,7 @@ export default function Home() {
             const result = add(string); // Use the input from the textarea
             console.log("result", result, string);
             setAnswer(result); // Update answer state
-            historyRef.current.unshift({ input: JSON.stringify(string), output: result });
+            setHistory(prevHistory => [{ input: JSON.stringify(string), output: result }, ...prevHistory]); // Update history in First-In Last-Out
             setError(null);
         } catch (error) {
             console.error("Error:", error);
@@ -100,9 +102,9 @@ export default function Home() {
                     </button>
                 </div>
                 <div className="p-4">
-                    <p className="text-center">Your answer is</p>
+                    <p className="text-center">Answer</p>
                     <h1 className="text-4xl font-bold text-center pt-2">{answer}</h1>
-                    {error && <p className="text-red-500 text-center">{error}</p>} {/* Display error message */}
+                    {error && <Alert message={error}/>}
                 </div>
             </div>
             <div className="inline-block w-96 py-2 align-middle sm:px-6 lg:px-8">
@@ -127,7 +129,7 @@ export default function Home() {
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                    {historyRef.current.map((entry, index) => (
+                    {history.slice(0,10).map((entry, index) => (
                         <tr key={index}>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-0">
                                 {index + 1}
