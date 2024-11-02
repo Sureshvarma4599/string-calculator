@@ -1,0 +1,146 @@
+"use client";
+import {useRef, useState} from "react";
+
+export default function Home() {
+    const [answer, setAnswer] = useState(0);
+    const [string, setString] = useState("");
+    const [error, setError] = useState("");
+
+    const historyRef = useRef([]);  // Store history of calculations
+
+    const clear = () => {
+        setAnswer(0);
+        setString("");
+        setError(""); // Clear error message
+    };
+
+    const escapeRegExp = (string: string) => {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+    };
+
+    const add = (numbers: string): number => {
+        if (numbers.trim() === '') {
+            return 0;
+        }
+
+        let delimiters: string[] = [',', '\n',';']; // Default delimiters
+        const customDelimiterMatch = numbers.match(/^\/\/\[(.+?)\]\n/); // Custom delimiter format check
+
+        if (customDelimiterMatch) {
+            const delimiterString = customDelimiterMatch[1];
+            delimiters = delimiterString.split('][').map(d => d.trim()); // Split by custom delimiters
+
+            // Remove the custom delimiter declaration from the numbers string
+            numbers = numbers.replace(customDelimiterMatch[0], '');
+        }
+        // Create a regex pattern to split by all delimiters, escaping them
+        const delimiterRegex = new RegExp(delimiters.map(escapeRegExp).join('|'), 'g');
+        const numberArray = numbers.split(delimiterRegex).map(Number).filter(n => !isNaN(n));
+
+        // Check for negatives
+        const negatives: number[] = numberArray.filter(n => n < 0);
+        if (negatives.length > 0) {
+            throw new Error(`negatives not allowed: ${negatives.join(', ')}`);
+        }
+
+        // Filter numbers <= 1000 and sum
+        return numberArray.filter(n => n <= 1000).reduce((sum, n) => sum + n, 0);
+    };
+
+    const calculate = () => {
+        try {
+            // console.log("parsed",JSON.stringify(string))
+            const result = add(string); // Use the input from the textarea
+            console.log("result", result, string);
+            setAnswer(result); // Update answer state
+            historyRef.current.unshift({ input: JSON.stringify(string), output: result });
+            setError(null);
+        } catch (error) {
+            console.error("Error:", error);
+            setAnswer(0);
+            setError(`Error: ${(error as Error).message}`); // Update error message
+        }
+    };
+
+
+    return (
+        <div
+            className="justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+            <h1 className="text-4xl font-bold text-center">String Calculator</h1>
+            <div className="flex flex-col space-y-4 pt-8">
+                <div className="w-72">
+                    <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">
+                        String to calculate
+                    </label>
+                    <div className="mt-2">
+                        <textarea
+                            id="string-calc"
+                            name="string"
+                            autoComplete="given-name"
+                            value={string}
+                            onChange={(e) => setString(e.target.value)}
+                            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                    </div>
+                </div>
+                <div className="flex space-x-2 ml-auto">
+                    <button
+                        type="button"
+                        onClick={calculate}
+                        className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                        Calculate
+                    </button>
+                    <button
+                        type="button"
+                        onClick={clear}
+                        className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    >
+                        Clear
+                    </button>
+                </div>
+                <div className="p-4">
+                    <p className="text-center">Your answer is</p>
+                    <h1 className="text-4xl font-bold text-center pt-2">{answer}</h1>
+                    {error && <p className="text-red-500 text-center">{error}</p>} {/* Display error message */}
+                </div>
+            </div>
+            <div className="inline-block w-96 py-2 align-middle sm:px-6 lg:px-8">
+                <p className="mt-2 text-sm text-gray-700">
+                    Calculation History
+                </p>
+                <table className="min-w-full divide-y divide-gray-300">
+
+                    <thead>
+                    <tr>
+                        <th scope="col"
+                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                            S.No
+                        </th>
+                        <th scope="col"
+                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                            Input
+                        </th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            Output
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                    {historyRef.current.map((entry, index) => (
+                        <tr key={index}>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-0">
+                                {index + 1}
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">
+                                {entry.input}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{entry.output}</td>
+                        </tr>))}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    );
+}
