@@ -1,6 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 ## Points
-deployed url - https://endearing-florentine-e315c0.netlify.app/
+deployed with vercel - https://string-calculator-khaki.vercel.app/
+deployed with netlify - https://endearing-florentine-e315c0.netlify.app/
 
 # Note - Additional steps
  - [ ] Numbers bigger than 1000 is ignored, so adding 2 + 1001 = 2;
