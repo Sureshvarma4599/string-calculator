@@ -1,6 +1,7 @@
 "use client";
 import {useRef, useState} from "react";
 import Alert from '@/components/alert';
+import {Table} from '@/components/table';
 
 export default function Home() {
     const [answer, setAnswer] = useState(0);
@@ -51,16 +52,13 @@ export default function Home() {
 
     const calculate = () => {
         try {
-            // console.log("parsed",JSON.stringify(string))
-            const result = add(string); // Use the input from the textarea
-            console.log("result", result, string);
-            setAnswer(result); // Update answer state
+            const result = add(string);
+            setAnswer(result);
             setHistory(prevHistory => [{ input: JSON.stringify(string), output: result }, ...prevHistory]); // Update history in First-In Last-Out
             setError(null);
         } catch (error) {
-            console.error("Error:", error);
             setAnswer(0);
-            setError(`Error: ${(error as Error).message}`); // Update error message
+            setError(`Error: ${(error as Error).message}`);
         }
     };
 
@@ -111,37 +109,7 @@ export default function Home() {
                 <p className="mt-2 text-sm text-gray-700">
                     Calculation History
                 </p>
-                <table className="min-w-full divide-y divide-gray-300">
-
-                    <thead>
-                    <tr>
-                        <th scope="col"
-                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                            S.No
-                        </th>
-                        <th scope="col"
-                            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
-                            Input
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                            Output
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                    {history.slice(0,10).map((entry, index) => (
-                        <tr key={index}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-0">
-                                {index + 1}
-                            </td>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">
-                                {entry.input}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{entry.output}</td>
-                        </tr>))}
-                    </tbody>
-
-                </table>
+               <Table data={history}/>
             </div>
         </div>
     );
