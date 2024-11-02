@@ -1,4 +1,14 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Points
+deployed url - https://endearing-florentine-e315c0.netlify.app/
+
+# Note - Additional steps
+ - [ ] Numbers bigger than 1000 is ignored, so adding 2 + 1001 = 2;
+
+# Tech stack used
+ - Tailwind css
+ - Typescript 
+ - Next.js App router
 
 ## Getting Started
 
